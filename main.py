@@ -81,11 +81,13 @@ for u in range(0, len(Origine)):
 
 # Methode qui renvoie le numero de l'arc reliant i a j, si l'arc n'existe pas
 # renvoie -1
-def Arc(i, j):
-    for l in range(len(Origine)):
-        if Origine[l] == i and Destination[l] == j:
-            return l
-    return  -1
+# Cette fonction n'etant pas optimisee, n'est plus utilisee.
+# A la place nous utiliserons la fonction Long_Arc_Succ
+# def Arc(i, j):
+#     for l in range(len(Origine)):
+#         if Origine[l] == i and Destination[l] == j:
+#             return l
+#     return -1
 
 
 # print(Arc(1704, 14814))
@@ -156,6 +158,17 @@ for i in range(NbSommets):
     for succ in Succ[i]:
         TraceSegment(i, succ, "black")
 
+
+# MODIFICATION 1
+# Qi j est dans Succ[i]
+# ind_j = Succ[i].index(j) est l'indice de j dans Succ[i]
+# Long_Arc_Succ[i][ind_j] est la longueur de l'arc
+Long_Arc_Succ = [[] for sommet in range(NbSommets)]
+for so in range(len(Origine)):
+    Long_Arc_Succ[Origine[so]].append(Longueur[so])
+# print(Long_Arc_Succ[1703][Succ[1703].index(1704)])
+
+
 def Disjkstra(sommet_depart, sommet_destination):
     Pi = [INFINITY for i in range(NbSommets)]
     PiPrime = [INFINITY for i in range(NbSommets)]
@@ -166,7 +179,8 @@ def Disjkstra(sommet_depart, sommet_destination):
     Pi[sommet_depart] = 0
     PiPrime[sommet_depart] = 0
     for j in Succ[sommet_depart]:
-        Pi[j] = Longueur[Arc(sommet_depart, j)]
+        ind_j = Succ[sommet_depart].index(j)
+        Pi[j] = Long_Arc_Succ[sommet_depart][ind_j]
         LePere[j] = sommet_depart
 
     nb_sommets_explores = 0
@@ -193,9 +207,10 @@ def Disjkstra(sommet_depart, sommet_destination):
             fini = True
         for k in Succ[sommet_retenu]:
             if (marque[k] == 0):
-                long = Longueur[Arc(sommet_retenu, k)]
+                ind_k = Succ[sommet_retenu].index(k)
+                long = Long_Arc_Succ[sommet_retenu][ind_k]
                 if Pi[sommet_retenu] + long < Pi[k]:
-                    Pi[k] = Pi[sommet_retenu] + Longueur[Arc(sommet_retenu, k)]
+                    Pi[k] = Pi[sommet_retenu] + Long_Arc_Succ[sommet_retenu][ind_k]
                     LePere[k] = sommet_retenu
 
     # for s in range(NbSommets):
@@ -217,9 +232,7 @@ TraceCercle(sommet_depart, 'green', rayon_od)
 TraceCercle(sommet_destination, 'red', rayon_od)
 INFINITY = float('inf')
 
-
 UNDEFINED = -1
-
 
 Disjkstra(sommet_depart, sommet_destination)
 time_end = time.process_time()
