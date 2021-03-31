@@ -168,6 +168,8 @@ for so in range(len(Origine)):
     Long_Arc_Succ[Origine[so]].append(Longueur[so])
 # print(Long_Arc_Succ[1703][Succ[1703].index(1704)])
 
+INFINITY = float('inf')
+UNDEFINED = -1
 
 def Disjkstra(sommet_depart, sommet_destination):
     Pi = [INFINITY for i in range(NbSommets)]
@@ -210,31 +212,39 @@ def Disjkstra(sommet_depart, sommet_destination):
                 ind_k = Succ[sommet_retenu].index(k)
                 long = Long_Arc_Succ[sommet_retenu][ind_k]
                 if Pi[sommet_retenu] + long < Pi[k]:
-                    Pi[k] = Pi[sommet_retenu] + Long_Arc_Succ[sommet_retenu][ind_k]
+                    Pi[k] = Pi[sommet_retenu] + long
                     LePere[k] = sommet_retenu
 
-    # for s in range(NbSommets):
-    #     if marque[s] == 1:
-    #         TraceCercle(s, 'yellow', 1)
-    #         # for k in Succ[s]:
-    #         #     if marque[s] == 1 and marque[k] == 1:
-    #         #         TraceSegment(s, k, 'yellow')
+    s = sommet_destination
+    # On part du sommet_destination
+    while LePere[s] != -1:
+        # On trace un segment entre le sommet et son pere
+        # le sommet devient son pere et on repete cette operation tant que le sommet a un pere
+        TraceSegment(s, LePere[s], 'red')
+        s = LePere[s]
+    # On retourne la longueur du chemin
+    return Pi[sommet_destination]
+
 
 
 
 # print(Succ)
 sommet_depart = 3000
+
 # sommet_destination = 11342
+# Environs 8s pour la V1 et 4s pour la v2
+
 sommet_destination = 22279
+# Environs 65s pour la v2
 time_start = time.process_time()
 TraceCercle(sommet_depart, 'green', rayon_od)
 
 TraceCercle(sommet_destination, 'red', rayon_od)
-INFINITY = float('inf')
 
-UNDEFINED = -1
-
-Disjkstra(sommet_depart, sommet_destination)
+longueur = Disjkstra(sommet_depart, sommet_destination)
 time_end = time.process_time()
-print('Duree du processus', time_end - time_start)
+print('La duree du processus est de : ', time_end - time_start)
+print('La longueur du chemin parcouru est de : ', longueur)
 fen.mainloop()
+
+
