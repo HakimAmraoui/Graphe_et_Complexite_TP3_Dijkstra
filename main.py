@@ -176,6 +176,9 @@ def Disjkstra(sommet_depart, sommet_destination):
     PiPrime = [INFINITY for i in range(NbSommets)]
     LePere = [UNDEFINED for i in range(NbSommets)]
     marque = [0 for i in range(NbSommets)]
+    Candidats = Succ[sommet_depart]
+    sommet_retenu = -1
+
 
     #
     Pi[sommet_depart] = 0
@@ -195,16 +198,30 @@ def Disjkstra(sommet_depart, sommet_destination):
 
         le_min = INFINITY
 
-        for sommet in range(NbSommets):
+        # MODIFICATION 2
+        # for sommet in Candidats:
+        #     if PiPrime[sommet] == INFINITY:
+        #         if Pi[sommet] < le_min:
+        #             le_min = Pi[sommet]
+        #             s = Candidats.index(sommet)
+        #             sommet_retenu = Candidats.pop(s)
+        #             for succ in Succ[sommet_retenu]:
+        #                 if succ not in Candidats:
+        #                     Candidats.append(succ)
+        #                 print(succ, Succ[sommet_retenu])
+
+        for sommet in Candidats:
             if PiPrime[sommet] == INFINITY:
                 if Pi[sommet] < le_min:
                     le_min = Pi[sommet]
                     sommet_retenu = sommet
+
         # print(Pi[sommet_retenu], sommet_retenu)
         marque[sommet_retenu] = 1
         # PiPrime[sommet_retenu] = Longueur[Arc(sommet, sommet_retenu)]
         PiPrime[sommet_retenu] = Pi[sommet_retenu]
         TraceCercle(sommet_retenu, 'yellow', 1)
+        Candidats.remove(sommet_retenu)
         if sommet_retenu == sommet_destination:
             fini = True
         for k in Succ[sommet_retenu]:
@@ -214,6 +231,8 @@ def Disjkstra(sommet_depart, sommet_destination):
                 if Pi[sommet_retenu] + long < Pi[k]:
                     Pi[k] = Pi[sommet_retenu] + long
                     LePere[k] = sommet_retenu
+                    if k not in Candidats:
+                        Candidats.append(k)
 
     s = sommet_destination
     # On part du sommet_destination
@@ -231,11 +250,12 @@ def Disjkstra(sommet_depart, sommet_destination):
 # print(Succ)
 sommet_depart = 3000
 
-# sommet_destination = 11342
-# Environs 8s pour la V1 et 4s pour la v2
+sommet_destination = 11342
+# Environs 8s pour la V1 et 0.8s pour la v2
 
 sommet_destination = 22279
 # Environs 65s pour la v2
+# Environs 1.6s pour la V2
 time_start = time.process_time()
 TraceCercle(sommet_depart, 'green', rayon_od)
 
@@ -247,4 +267,6 @@ print('La duree du processus est de : ', time_end - time_start)
 print('La longueur du chemin parcouru est de : ', longueur)
 fen.mainloop()
 
-
+# Candidats = [succ for succ in Succ[sommet_depart]]
+# for s in Candidats:
+#     print(Pi[s])
